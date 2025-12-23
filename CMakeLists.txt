@@ -16,28 +16,43 @@ set_property( DIRECTORY PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME} )
 
 option(SUPPORT_WINDOWED "Support a windowed mode to show progress (req. GLFW)" ON)
 
-find_package(GLM REQUIRED)
-message(STATUS "GLM at ${GLM_INCLUDE_DIR}")
-include_directories(${GLM_INCLUDE_DIRS})
-set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} ${GLM_LIBRARIES})
+include(FetchContent)
+
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG 1.0.2
+	GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(glm)
+
 if (UNIX)
 	set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} pthread)
 endif()
 
 if(SUPPORT_WINDOWED)
-	add_definitions("-DSUPPORT_WINDOWED")
+    add_definitions("-DSUPPORT_WINDOWED")
 
-	find_package(OpenGL REQUIRED)
-	set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} ${OPENGL_LIBRARIES})
+    find_package(OpenGL REQUIRED)
+    set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} ${OPENGL_LIBRARIES})
 
-	find_package(GLFW3 REQUIRED)
-	message(STATUS "GLFW3 at ${GLFW3_INCLUDE_DIR}")
-	include_directories(${GLFW3_INCLUDE_DIR} )
-	set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} ${GLFW3_LIBRARY})
+    # Use FetchContent to automatically download and build GLFW
+    include(FetchContent)
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG        3.4
+        GIT_SHALLOW TRUE
+    )
+    FetchContent_MakeAvailable(glfw)
 
-	set(WINDOW_ARG " --window")
+    message(STATUS "GLFW headers: ${glfw_SOURCE_DIR}/include")
+    include_directories(${glfw_SOURCE_DIR}/include)
+    set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} glfw)
+
+    set(WINDOW_ARG " --window")
 else()
-	set(WINDOW_ARG "")
+    set(WINDOW_ARG "")
 endif()
 #message(STATUS "${WINDOW_ARG}")
 
@@ -68,4 +83,6 @@ set_property( TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY
 	"${CMAKE_SOURCE_DIR}"
 )
 
-target_link_libraries(${PROJECT_NAME} ${EXTERNAL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+	glm::glm
+	${EXTERNAL_LIBRARIES})
