@@ -6,15 +6,20 @@
 
 #include "framebuffer.hpp"
 
-
-
 class Scene;
 
 class Renderer final {
 	public:
+		enum class RenderMode {
+			RGB,
+			Spectral
+		};
+
 		//Render options
 		class Options final { public:
 			std::string scene_name;
+
+			RenderMode render_mode;
 
 			size_t res[2]; //Resolution of image
 			size_t spp;    //Samples per pixel

@@ -1,7 +1,4 @@
 ﻿#pragma once
-
-
-
 //Includes
 
 //	C Standard Library
@@ -33,8 +30,6 @@
 	//	GLFW
 	#include <GLFW/glfw3.h>
 #endif
-
-
 
 //Configuration
 

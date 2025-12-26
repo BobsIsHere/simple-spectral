@@ -33,5 +33,7 @@
 
 .build/
 build/
+.vs/
+vs/
 
 output.png

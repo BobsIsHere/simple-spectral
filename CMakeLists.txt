@@ -36,7 +36,6 @@ if(SUPPORT_WINDOWED)
     find_package(OpenGL REQUIRED)
     set(EXTERNAL_LIBRARIES ${EXTERNAL_LIBRARIES} ${OPENGL_LIBRARIES})
 
-    # Use FetchContent to automatically download and build GLFW
     include(FetchContent)
     FetchContent_Declare(
         glfw

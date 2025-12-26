@@ -176,10 +176,14 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 
-		#ifdef RENDER_MODE_SPECTRAL
-		//Initialize color data
-		Color::init();
-		#endif
+		//#ifdef RENDER_MODE_SPECTRAL
+		////Initialize color data
+		//Color::init();
+		//#endif
+
+		if (options.render_mode == Renderer::RenderMode::Spectral) {
+			Color::init();
+		}
 
 		//Round-trip error test/demonstration
 		#if 0 && defined RENDER_MODE_SPECTRAL
@@ -342,10 +346,14 @@ int main(int argc, char* argv[]) {
 		}
 		#endif
 
-		#ifdef RENDER_MODE_SPECTRAL
-		//Clean up color data
-		Color::deinit();
-		#endif
+		//#ifdef RENDER_MODE_SPECTRAL
+		////Clean up color data
+		//Color::deinit();
+		//#endif
+
+		if (options.render_mode == Renderer::RenderMode::Spectral) {
+			Color::deinit();
+		}
 	}
 
 	#if defined _WIN32 && defined _DEBUG
