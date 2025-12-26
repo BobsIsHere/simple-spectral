@@ -47,7 +47,7 @@ Scene* Scene::get_new_cornell     () {
 	}
 
 	{
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			std::vector<std::vector<float>> data = load_spectral_data("data/scenes/cornell/white-green-red.csv");
 			if (data.size()==3); else { fprintf(stderr,"Invalid data in file!\n"); throw -1; }
 
@@ -64,20 +64,20 @@ Scene* Scene::get_new_cornell     () {
 
 			MaterialLambertian* red             = new MaterialLambertian;
 			*red->albedo.constant        = SpectralReflectance( data[2], 400,700 );
-		#else
-			MaterialLambertian* white_back      = new MaterialLambertian;
-			white_back->albedo.constant  = RGB_Reflectance(1,1,1);
+		//#else
+		//	MaterialLambertian* white_back      = new MaterialLambertian;
+		//	white_back->albedo.constant  = RGB_Reflectance(1,1,1);
 
-			MaterialLambertian* white_blocks    = new MaterialLambertian(*white_back);
+		//	MaterialLambertian* white_blocks    = new MaterialLambertian(*white_back);
 
-			MaterialLambertian* white_floorceil = new MaterialLambertian(*white_back);
+		//	MaterialLambertian* white_floorceil = new MaterialLambertian(*white_back);
 
-			MaterialLambertian* green           = new MaterialLambertian;
-			green->     albedo.constant  = RGB_Reflectance(0.07f,0.38f,0.07f); //Set heuristically.  There is no correct way to set it.
+		//	MaterialLambertian* green           = new MaterialLambertian;
+		//	green->     albedo.constant  = RGB_Reflectance(0.07f,0.38f,0.07f); //Set heuristically.  There is no correct way to set it.
 
-			MaterialLambertian* red             = new MaterialLambertian;
-			red->       albedo.constant  = RGB_Reflectance(1,0,0);
-		#endif
+		//	MaterialLambertian* red             = new MaterialLambertian;
+		//	red->       albedo.constant  = RGB_Reflectance(1,0,0);
+		//#endif
 
 		result->materials["white-back"     ] = white_back;
 		result->materials["white-blocks"   ] = white_blocks;
@@ -88,7 +88,7 @@ Scene* Scene::get_new_cornell     () {
 
 	{
 		MaterialLambertian* light = new MaterialLambertian;
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			std::vector<std::vector<float>> data = load_spectral_data("data/scenes/cornell/light.csv");
 			if (data.size()==1); else { fprintf(stderr,"Invalid data in file!\n"); throw -1; }
 
@@ -96,10 +96,10 @@ Scene* Scene::get_new_cornell     () {
 			//light->emission         = Color::data->D65_rad * 0.5f;
 			//light->emission         = Color::data->D65_rad * 5.0f;
 			*light->albedo.constant = SpectralReflectance( 0.78f );
-		#else
+		/*#else
 			light->emission         = RGB_Radiance(1,1,1) * 200.0f;
 			light->albedo.constant  = RGB_Reflectance( 0.78f );
-		#endif
+		#endif*/
 
 		result->materials["light"] = light;
 	}
@@ -294,11 +294,11 @@ Scene* Scene::get_new_cornell_srgb() {
 	result->materials["srgb"] = mtl_tex;
 
 	MaterialLambertian* mtl_white1 = new MaterialLambertian;
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 		*mtl_white1->albedo.constant = SpectralReflectance( 1.0f );
-	#else
+	/*#else
 		 mtl_white1->albedo.constant = RGB_Reflectance    ( 1.0f );
-	#endif
+	#endif*/
 	result->materials["white1"] = mtl_white1;
 
 	for (PrimBase* prim : result->primitives) {
@@ -308,11 +308,11 @@ Scene* Scene::get_new_cornell_srgb() {
 	}
 
 	static_cast<MaterialLambertian*>(result->materials["light"])->emission =
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			Color::data->D65_rad * lightsc
-		#else
+		/*#else
 			RGB_Radiance(1,1,1)  * lightsc;
-		#endif
+		#endif*/
 	;
 
 	return result;
@@ -334,13 +334,13 @@ Scene* Scene::get_new_plane_srgb  () {
 
 	{
 		MaterialLambertian* mtl_light = new MaterialLambertian;
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			*mtl_light->albedo.constant = SpectralReflectance(0.0f);
 			 mtl_light->emission = Color::data->D65_rad;
-		#else
+		/*#else
 			 mtl_light->albedo.constant = RGB_Reflectance    (0.0f);
 			 mtl_light->emission = RGB_Radiance(1,1,1);
-		#endif
+		#endif*/
 		result->materials["light"] = mtl_light;
 
 		MaterialSimpleAlbedoBase* mtl_tex = new

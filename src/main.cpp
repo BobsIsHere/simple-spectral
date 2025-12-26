@@ -78,6 +78,7 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		}
 		throw -2; //Argument not found
 	};
+
 	auto get_arg_req = [&](std::string const& name, std::string const& shortname="") -> std::string {
 		try {
 			return get_arg(name,shortname);
@@ -89,6 +90,7 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		}
 	};
 
+	//--- Scene Requirement --- //
 	options->scene_name = get_arg_req("--scene","-s");
 	if      (options->scene_name=="cornell"     );
 	else if (options->scene_name=="cornell-srgb");
@@ -101,6 +103,7 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		throw -3;
 	}
 
+	//--- Render Mode Requirement --- //
 	std::string str_render_mode = get_arg_req("--render-mode", "-rm");
 	if (str_render_mode == "rgb") {
 		options->render_mode = Renderer::RenderMode::RGB;
@@ -118,6 +121,9 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		throw;
 	}
 
+	Color::setSpectralEnabled(options->render_mode == Renderer::RenderMode::Spectral);
+
+	//--- Resolution Requirement --- //
 	std::string strs_res[2];
 	strs_res[0] = get_arg_req("--width", "-w");
 	strs_res[1] = get_arg_req("--height","-h");
@@ -129,6 +135,7 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		throw;
 	}
 
+	//--- Samples Requirement --- //
 	std::string str_spp = get_arg_req("--samples", "-spp");
 	try {
 		options->spp = Str::to_pos(str_spp);
@@ -137,6 +144,7 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		throw;
 	}
 
+	//--- Indirect Requirement --- //
 	std::string str_indonly;
 	try {
 		str_indonly = get_arg("--indirect-only", "-io");
@@ -152,8 +160,10 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 		}
 	}
 
+	//--- Output Requirement --- //
 	options->output_path = get_arg_req("--output", "-o");
 
+	//--- Window Requirement --- //
 	#ifdef SUPPORT_WINDOWED
 	std::string str_win;
 	try {

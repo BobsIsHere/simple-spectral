@@ -1,22 +1,22 @@
 ﻿#pragma once
-
 #include "../stdafx.hpp"
-
 #include "../spectrum.hpp"
 
-
-
-#ifdef RENDER_MODE_SPECTRAL_JH
-struct _RGB2Spec;
-#endif
-
-
+//#ifdef RENDER_MODE_SPECTRAL_JH
+//struct _RGB2Spec;
+//#endif
 
 namespace Color {
 
+	inline bool g_spectral_enabled = true;
 
+	inline bool isSpectralEnabled() {
+		return g_spectral_enabled;
+	}
 
-#ifdef RENDER_MODE_SPECTRAL
+	inline void setSpectralEnabled(bool enabled) {
+		g_spectral_enabled = enabled;
+	}
 
 //Encapsulates color data required by the renderer.
 struct _Data final {
@@ -41,7 +41,7 @@ struct _Data final {
 	SpectralRadiance    D65_rad;
 	CIEXYZ_32F          D65_rad_XYZ;
 
-	#if   defined RENDER_MODE_SPECTRAL_OURS
+	//#if   defined RENDER_MODE_SPECTRAL_OURS
 	//Basis for spectral reflectance computed using our algorithm.  Given any BT.709 "(R,G,B)"
 	//	triple that is linear (pre-gamma) and normalized (in the range "[0,1]"), i.e., ℓRGB ("linear
 	//	RGB"), the spectral reflectance given by:
@@ -57,9 +57,9 @@ struct _Data final {
 		SpectralReflectance g;
 		SpectralReflectance b;
 	} basis_bt709;
-	#elif defined RENDER_MODE_SPECTRAL_JH
+	/*#elif defined RENDER_MODE_SPECTRAL_JH
 	_RGB2Spec* model_jh2019;
-	#endif
+	#endif*/
 
 	//Conversion matrix from BT.709 RGB to CIE XYZ
 	glm::mat3x3 matr_lrgb_to_xyz;
@@ -73,7 +73,6 @@ void   init();
 //Cleanup of global color data
 void deinit();
 
-#endif
 
 
 
@@ -98,7 +97,7 @@ inline lRGB_F32 srgb_to_lrgb(sRGB_F32 const& srgb) {
 
 
 
-#ifdef RENDER_MODE_SPECTRAL
+//#ifdef RENDER_MODE_SPECTRAL
 
 //Calculate the CIE XYZ tristimulus value for the given spectral radiant flux `spec_rad_flux`.  Note
 //	radiant flux (i.e. radiant power) is what the eye is sensitive to, not e.g. radiance.  A camera
@@ -123,9 +122,9 @@ inline CIEXYZ_32F specradflux_to_ciexyz(SpectralRadiantFlux::HeroSample const& s
 	SpectrumUnspecified::HeroSample value_sample_zbar_times_flux = data->std_obs_zbar[lambda_0] * spec_rad_flux;
 
 	//Monte Carlo estimate of the integral of that product over each wavelength band.
-	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_X = value_sample_xbar_times_flux * LAMBDA_STEP;
-	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_Y = value_sample_ybar_times_flux * LAMBDA_STEP;
-	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_Z = value_sample_zbar_times_flux * LAMBDA_STEP;
+	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_X = value_sample_xbar_times_flux * lambda_step();
+	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_Y = value_sample_ybar_times_flux * lambda_step();
+	SpectrumUnspecified::HeroSample value_montecarlo_est_subintegrals_Z = value_sample_zbar_times_flux * lambda_step();
 
 	//Summing them gives the Monte Carlo estimate of the integral of that product over the whole
 	//	spectrum.  That is, this is the Monte Carlo estimate of the product of the notional spectrum
@@ -157,15 +156,12 @@ inline CIEXYZ_32F lrgb_to_ciexyz(lRGB_F32   const& lrgb) {
 //Direct conversion from CIE XYZ to post-gamma, normalized BT.709 RGB (i.e. sRGB).
 sRGB_F32 ciexyz_to_srgb(CIEXYZ_32F const& xyz);
 
-#ifdef RENDER_MODE_SPECTRAL_OURS
+//#ifdef RENDER_MODE_SPECTRAL_OURS
 //Round-trip functions, for testing/demonstration purposes.  Note that this is computed in 32-bit
 //	precision!
 lRGB_F32 round_trip_lrgb(lRGB_F32 const& lrgb);
 sRGB_F32 round_trip_srgb(sRGB_F32 const& srgb);
-#endif
+//#endif
 
-#endif
-
-
-
+//#endif
 }

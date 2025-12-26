@@ -4,7 +4,7 @@
 
 
 
-#ifdef RENDER_MODE_SPECTRAL
+//#ifdef RENDER_MODE_SPECTRAL
 
 
 
@@ -82,4 +82,4 @@ std::vector<std::vector<float>> load_spectral_data(std::string const& csv_path);
 
 
 
-#endif
+//#endif

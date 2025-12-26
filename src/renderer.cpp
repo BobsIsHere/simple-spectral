@@ -100,11 +100,11 @@ void Renderer::_print_progress() const {
 	}
 }
 
-#ifdef RENDER_MODE_SPECTRAL
+//#ifdef RENDER_MODE_SPECTRAL
 CIEXYZ_A_32F Renderer::_render_sample(Math::RNG& rng, size_t i,size_t j)
-#else
-lRGB_A_F32   Renderer::_render_sample(Math::RNG& rng, size_t i,size_t j)
-#endif
+//#else
+//lRGB_A_F32   Renderer::_render_sample(Math::RNG& rng, size_t i,size_t j)
+//#endif
 {
 	//Render sample within pixel (`i`,`j`).
 
@@ -131,33 +131,33 @@ lRGB_A_F32   Renderer::_render_sample(Math::RNG& rng, size_t i,size_t j)
 		camera_ray_dir = Dir(glm::normalize( glm::dvec3(point) - glm::dvec3(scene->camera.pos) ));
 	}
 
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 	//	Hero wavelength sampling.
 	//		First, the spectrum is divided into some number of regions.  Then, the hero wavelength
 	//			is selected randomly from the first region.
-	nm lambda_0 = LAMBDA_MIN + rand_1f(rng)*LAMBDA_STEP;
+	nm lambda_0 = LAMBDA_MIN + rand_1f(rng)*lambda_step();
 	//		Subsequent wavelengths are defined implicitly as multiples of `LAMBDA_STEP` above
 	//			`lambda_0`.  The vector of these wavelengths are the wavelengths that the light
 	//			transport is computed along.
-	#endif
+	//#endif
 
 	//	Main radiance-gathering function used for recursive path tracing
 	bool hit_anything = false;
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 	std::function<SpectralRadiance::HeroSample(Ray const&,bool,unsigned,PrimBase const*)> L = [&](
 		Ray const& ray, bool last_was_delta, unsigned depth, PrimBase const* ignore
 	) -> SpectralRadiance::HeroSample
-	#else
-	std::function<RGB_Radiance(Ray const&,bool,unsigned,PrimBase const*)> L = [&](
+	//#else
+	/*std::function<RGB_Radiance(Ray const&,bool,unsigned,PrimBase const*)> L = [&](
 		Ray const& ray, bool last_was_delta, unsigned depth, PrimBase const* ignore
-	) -> RGB_Radiance
-	#endif
+	) -> RGB_Radiance*/
+	//#endif
 	{
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 		SpectralRadiance::HeroSample radiance(0);
-		#else
-		RGB_Radiance                 radiance(0);
-		#endif
+		//#else
+		//RGB_Radiance                 radiance(0);
+		//#endif
 
 		HitRecord hitrec;
 		if (scene->intersect( ray,&hitrec, ignore )) {
@@ -265,18 +265,18 @@ lRGB_A_F32   Renderer::_render_sample(Math::RNG& rng, size_t i,size_t j)
 		auto pixel_flux_est = pixel_rad_est * glm::dot( camera_ray_dir, scene->camera.dir );
 	#endif
 
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 		//Convert each wavelength sample to CIE XYZ and average.
 		CIEXYZ_32F ciexyz_avg = Color::specradflux_to_ciexyz( pixel_flux_est, lambda_0 );
 
 		return CIEXYZ_A_32F( ciexyz_avg,     hit_anything?1.0f:0.0f );
-	#else
-		//Die inside.
-		return lRGB_A_F32  ( pixel_flux_est, hit_anything?1.0f:0.0f );
-	#endif
+	//#else
+	//	//Die inside.
+	//	return lRGB_A_F32  ( pixel_flux_est, hit_anything?1.0f:0.0f );
+	//#endif
 }
 void       Renderer::_render_pixel (Math::RNG& rng, size_t i,size_t j) {
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 		/*
 		Accumulate samples into CIE XYZ instead of a spectrum (probably `SpectralRadiantFlux`).
 		This way we avoid quantization artifacts and a large memory overhead per-pixel (in a more-
@@ -296,7 +296,7 @@ void       Renderer::_render_pixel (Math::RNG& rng, size_t i,size_t j) {
 		avg *= 1000.0 / static_cast<double>(options.spp);
 
 		framebuffer(i,j) = sRGB_A_F32( Color::ciexyz_to_srgb(CIEXYZ_32F(avg)), avg.a );
-	#else
+	/*#else
 		lRGB_A_F64   avg( 0,0,0, 0 );
 		for (size_t k=0;k<options.spp;++k) {
 			avg += _render_sample(rng, i,j);
@@ -304,7 +304,7 @@ void       Renderer::_render_pixel (Math::RNG& rng, size_t i,size_t j) {
 		avg /= static_cast<double>(options.spp);
 
 		framebuffer(i,j) = sRGB_A_F32( Color::lrgb_to_srgb  (lRGB_F32  (avg)), avg.a );
-	#endif
+	#endif*/
 }
 void Renderer::_render_threadwork() {
 	//Add ourself to the count of rendering threads

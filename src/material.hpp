@@ -25,7 +25,7 @@ class sRGB_ReflectanceTexture final {
 		sRGB_ReflectanceTexture(sRGB_ReflectanceTexture const& other);
 		~sRGB_ReflectanceTexture();
 
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 		//Return hero wavelength sample of the texture at the coordinates given by pixel index
 		//	(`i`,`j`) for the hero wavelength `lambda_0`.  Note that scanlines are stored top-to-
 		//	bottom.
@@ -33,13 +33,13 @@ class sRGB_ReflectanceTexture final {
 		//Return hero wavelength sample of the texture at the coordinates given by ST coordinate
 		//	`st` for the hero wavelength `lambda_0`.
 		SpectralReflectance::HeroSample sample( ST const& st,      nm lambda_0 ) const;
-	#else
+	//#else
 		//Return RGB sample of the texture at the coordinates given by pixel index (`i`,`j`).  Note
 		//	that scanlines are stored top-to-bottom.
 		RGB_Reflectance                 sample( size_t i,size_t j              ) const;
 		//Return RGB sample of the texture at the coordinates given by ST coordinate `st`.
 		RGB_Reflectance                 sample( ST const& st                   ) const;
-	#endif
+	//#endif
 };
 
 
@@ -48,48 +48,48 @@ class sRGB_ReflectanceTexture final {
 class MaterialBase {
 	public:
 		//Emission (default zeros).
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			SpectralRadiance emission;
-		#else
+		/*#else
 			RGB_Radiance     emission;
-		#endif
+		#endif*/
 
 		//Encapsulates the state of a BSDF evaluation (that is, given the input, output, and normal
 		//	vectors, return the BSDF's value).
 		struct BSDF_Evaluation  final {
 			ST const st;
-			#ifdef RENDER_MODE_SPECTRAL
+			//#ifdef RENDER_MODE_SPECTRAL
 			nm const lambda_0;
-			#endif
+			//#endif
 
 			Dir const w_o;
 			Dir const N;
 			Dir const w_i;
 
-			#ifdef RENDER_MODE_SPECTRAL
+			//#ifdef RENDER_MODE_SPECTRAL
 				SpectralRadiance::HeroSample f_s;
-			#else
+			/*#else
 				RGB_RecipSR                  f_s;
-			#endif
+			#endif*/
 		};
 		//Encapsulates the state of a BSDF interaction (that is, given the output and normal
 		//	vectors, return a randomly sampled input vector, the PDF of choosing it, and the BSDF's
 		//	value).
 		struct BSDF_Interaction final {
 			ST const st;
-			#ifdef RENDER_MODE_SPECTRAL
+			//#ifdef RENDER_MODE_SPECTRAL
 			nm const lambda_0;
-			#endif
+			//#endif
 
 			Dir const w_o;
 			Dir const N;
 			Dir w_i; float pdf_w_i; Math::RNG& rng;
 
-			#ifdef RENDER_MODE_SPECTRAL
+			//#ifdef RENDER_MODE_SPECTRAL
 				SpectralRadiance::HeroSample f_s;
-			#else
+			/*#else
 				RGB_RecipSR                  f_s;
-			#endif
+			#endif*/
 		};
 
 	protected:
@@ -97,15 +97,15 @@ class MaterialBase {
 	public:
 		virtual ~MaterialBase() = default;
 
-	#ifdef RENDER_MODE_SPECTRAL
+	//#ifdef RENDER_MODE_SPECTRAL
 		SpectralRadiance::HeroSample evaluate_emission(ST const& st, nm lambda_0, Dir const& w_0) const {
 			return emission[lambda_0];
 		}
-	#else
-		RGB_Radiance                 evaluate_emission(ST const& st,              Dir const& w_0) const {
+	//#else
+		/*RGB_Radiance                 evaluate_emission(ST const& st,              Dir const& w_0) const {
 			return emission;
-		}
-	#endif
+		}*/
+	//#endif
 		virtual void evaluate_bsdf(struct BSDF_Evaluation*  evaluation ) const = 0;
 		virtual void interact_bsdf(struct BSDF_Interaction* interaction) const = 0;
 
@@ -118,20 +118,20 @@ class MaterialSimpleAlbedoBase : public MaterialBase {
 	public:
 		enum MODE { CONSTANT, TEXTURE } const mode;
 		union Albedo final {
-			#ifdef RENDER_MODE_SPECTRAL
+			//#ifdef RENDER_MODE_SPECTRAL
 			SpectralReflectance*const     constant;
-			#else
+			/*#else
 			RGB_Reflectance               constant;
-			#endif
+			#endif*/
 			sRGB_ReflectanceTexture*const texture;
 
-		#ifdef RENDER_MODE_SPECTRAL
+		//#ifdef RENDER_MODE_SPECTRAL
 			Albedo(                                ) : constant(new SpectralReflectance    (1.0f  )) {}
 			Albedo(SpectralReflectance const* other) : constant(new SpectralReflectance    (*other)) {}
-		#else
+		/*#else
 			Albedo(                                ) : constant(    RGB_Reflectance        (1.0f  )) {}
 			Albedo(RGB_Reflectance const& other    ) : constant(    RGB_Reflectance        ( other)) {}
-		#endif
+		#endif*/
 			Albedo(std::string             const& path ) : texture(new sRGB_ReflectanceTexture(path  )) {}
 			Albedo(sRGB_ReflectanceTexture const* other) : texture(new sRGB_ReflectanceTexture(*other)) {}
 		} albedo;

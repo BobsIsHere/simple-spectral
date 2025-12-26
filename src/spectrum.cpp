@@ -4,7 +4,7 @@
 
 
 
-#ifdef RENDER_MODE_SPECTRAL
+//#ifdef RENDER_MODE_SPECTRAL
 
 
 
@@ -61,7 +61,7 @@ float _Spectrum::_sample_linear (nm lambda) const {
 _Spectrum::HeroSample _Spectrum::operator[](nm lambda_0) const {
 	HeroSample result;
 	for (size_t i=0;i<SAMPLE_WAVELENGTHS;++i) {
-		result[i] = std::invoke(_sampler, this, lambda_0+i*LAMBDA_STEP );
+		result[i] = std::invoke(_sampler, this, lambda_0+i*lambda_step() );
 	}
 	return result;
 }
@@ -214,4 +214,4 @@ std::vector<std::vector<float>> load_spectral_data(std::string const& csv_path) 
 
 
 
-#endif
+//#endif
