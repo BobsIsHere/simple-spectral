@@ -55,37 +55,37 @@
 //	Whether to use spectral rendering (correct), and if so which variant to use (our paper, the work
 //		by Meng et al. 2015, or the work by Jakob and Hanika 2019) or RGB mode (what many people do
 //		instead).
-#if 1
-	#define RENDER_MODE_SPECTRAL
-
-	#define RENDER_MODE_SPECTRAL_ALGNUM 1
-	#if    RENDER_MODE_SPECTRAL_ALGNUM == 1
-		#define RENDER_MODE_SPECTRAL_OURS
-	#elif  RENDER_MODE_SPECTRAL_ALGNUM == 2
-		#define RENDER_MODE_SPECTRAL_MENG
-	#elif  RENDER_MODE_SPECTRAL_ALGNUM == 3
-		#define RENDER_MODE_SPECTRAL_JH
-	#else
-		#error
-	#endif
-
-	//		The CIE observer standard to use.  The 1931 version is the CIE 1931 2° standard
-	//			observer, and the 2006 version is the CIE 2006 10° standard observer.  The former is
-	//			based on 1920s experiments and is well-established.  The latter is based on updated
-	//			data, a wider field of view, and a denser sampling.  The latter is probably what one
-	//			should be using.
-	#if 1
-		#define CIE_OBSERVER 1931
-	#else
-		#define CIE_OBSERVER 2006
-	#endif
-
-	//		Number of wavelengths sampled by a single sample.  When more than one is used, hero
-	//			wavelength sampling is done.
-	#define SAMPLE_WAVELENGTHS 4_zu
-#else
-	#define RENDER_MODE_RGB
-#endif
+//#if 1
+//	#define RENDER_MODE_SPECTRAL
+//
+//	#define RENDER_MODE_SPECTRAL_ALGNUM 1
+//	#if    RENDER_MODE_SPECTRAL_ALGNUM == 1
+//		#define RENDER_MODE_SPECTRAL_OURS
+//	#elif  RENDER_MODE_SPECTRAL_ALGNUM == 2
+//		#define RENDER_MODE_SPECTRAL_MENG
+//	#elif  RENDER_MODE_SPECTRAL_ALGNUM == 3
+//		#define RENDER_MODE_SPECTRAL_JH
+//	#else
+//		#error
+//	#endif
+//
+//	//		The CIE observer standard to use.  The 1931 version is the CIE 1931 2° standard
+//	//			observer, and the 2006 version is the CIE 2006 10° standard observer.  The former is
+//	//			based on 1920s experiments and is well-established.  The latter is based on updated
+//	//			data, a wider field of view, and a denser sampling.  The latter is probably what one
+//	//			should be using.
+//	#if 1
+//		#define CIE_OBSERVER 1931
+//	#else
+//		#define CIE_OBSERVER 2006
+//	#endif
+//
+//	//		Number of wavelengths sampled by a single sample.  When more than one is used, hero
+//	//			wavelength sampling is done.
+//	#define SAMPLE_WAVELENGTHS 4_zu
+//#else
+//	#define RENDER_MODE_RGB
+//#endif
 
 #ifdef SUPPORT_WINDOWED
 	//Whether to make the un-rendered pixels partially transparent.  Disabled by default because on
@@ -98,45 +98,45 @@
 
 //Computed values
 
-#ifdef RENDER_MODE_SPECTRAL
-	#if !defined RENDER_MODE_SPECTRAL_OURS && CIE_OBSERVER!=1931
-		#error "Only our algorithm currently implements support for the newest CIE standard observer!"
-	#endif
-
-	//	Shortest and longest wavelengths, in nanometers, considered during the rendering.  It only
-	//		makes sense to sample wavelengths where the observer can see anything (and maybe then,
-	//		perhaps even slightly less than that, since at the extreme wavelengths we cannot see
-	//		very well).  The values here are simply the ranges of the respective observer functions.
-	#if   CIE_OBSERVER == 1931
-		#define LAMBDA_MIN 380_nm
-		#define LAMBDA_MAX 780_nm
-	#elif CIE_OBSERVER == 2006
-		#define LAMBDA_MIN 390_nm
-		#define LAMBDA_MAX 830_nm
-	#else
-		#error "Implementation error!"
-	#endif
-#endif
+//#ifdef RENDER_MODE_SPECTRAL
+//	#if !defined RENDER_MODE_SPECTRAL_OURS && CIE_OBSERVER!=1931
+//		#error "Only our algorithm currently implements support for the newest CIE standard observer!"
+//	#endif
+//
+//	//	Shortest and longest wavelengths, in nanometers, considered during the rendering.  It only
+//	//		makes sense to sample wavelengths where the observer can see anything (and maybe then,
+//	//		perhaps even slightly less than that, since at the extreme wavelengths we cannot see
+//	//		very well).  The values here are simply the ranges of the respective observer functions.
+//	#if   CIE_OBSERVER == 1931
+//		#define LAMBDA_MIN 380_nm
+//		#define LAMBDA_MAX 780_nm
+//	#elif CIE_OBSERVER == 2006
+//		#define LAMBDA_MIN 390_nm
+//		#define LAMBDA_MAX 830_nm
+//	#else
+//		#error "Implementation error!"
+//	#endif
+//#endif
 
 
 
 //Common Types
 
-#ifdef RENDER_MODE_SPECTRAL
-	//	CIE XYZ tristimulus values
-	typedef glm:: vec3 CIEXYZ_32F;
-	typedef glm::dvec3 CIEXYZ_64F;
-	typedef glm:: vec4 CIEXYZ_A_32F;
-	typedef glm::dvec4 CIEXYZ_A_64F;
-
-	//	Nanometers
-	typedef float nm;
-	constexpr inline float operator""_nm(long double        x) { return static_cast<float>(x); }
-	constexpr inline float operator""_nm(unsigned long long x) { return static_cast<float>(x); }
-
-	//	Kelvin scale (kelvin, K)
-	typedef float kelvin;
-#endif
+//#ifdef RENDER_MODE_SPECTRAL
+//	//	CIE XYZ tristimulus values
+//	typedef glm:: vec3 CIEXYZ_32F;
+//	typedef glm::dvec3 CIEXYZ_64F;
+//	typedef glm:: vec4 CIEXYZ_A_32F;
+//	typedef glm::dvec4 CIEXYZ_A_64F;
+//
+//	//	Nanometers
+//	typedef float nm;
+//	constexpr inline float operator""_nm(long double        x) { return static_cast<float>(x); }
+//	constexpr inline float operator""_nm(unsigned long long x) { return static_cast<float>(x); }
+//
+//	//	Kelvin scale (kelvin, K)
+//	typedef float kelvin;
+//#endif
 
 //	BT.709 color
 //		Linear (pre-gamma) RGB, floating-point
@@ -172,13 +172,13 @@ typedef float radians;
 typedef glm::vec2 ST;
 typedef glm::vec2 UV;
 
-#ifndef RENDER_MODE_SPECTRAL
-	//Absolute madness, I say
-	typedef lRGB_F32 RGB_Radiance;
-	typedef lRGB_F32 RGB_RadiantFlux;
-	typedef lRGB_F32 RGB_RecipSR;
-#endif
-typedef lRGB_F32 RGB_Reflectance;
+//#ifndef RENDER_MODE_SPECTRAL
+//	//Absolute madness, I say
+//	typedef lRGB_F32 RGB_Radiance;
+//	typedef lRGB_F32 RGB_RadiantFlux;
+//	typedef lRGB_F32 RGB_RecipSR;
+//#endif
+//typedef lRGB_F32 RGB_Reflectance;
 
 
 
@@ -279,12 +279,12 @@ constexpr inline size_t operator""_zu(unsigned long long x) { return static_cast
 #define qNaN std::numeric_limits<float>::quiet_NaN()
 #define INF  std::numeric_limits<float>::infinity();
 
-#ifdef RENDER_MODE_SPECTRAL
-	//	The size of the wavelength band each wavelength in a hero sample is responsible for
-	#define LAMBDA_STEP ( (LAMBDA_MAX-LAMBDA_MIN) / static_cast<nm>(SAMPLE_WAVELENGTHS) )
-
-	//	Code that's only present when doing spectral rendering
-	#define SPECTRAL_ONLY(CODE) CODE
-#else
-	#define SPECTRAL_ONLY(CODE)
-#endif
+//#ifdef RENDER_MODE_SPECTRAL
+//	//	The size of the wavelength band each wavelength in a hero sample is responsible for
+//	#define LAMBDA_STEP ( (LAMBDA_MAX-LAMBDA_MIN) / static_cast<nm>(SAMPLE_WAVELENGTHS) )
+//
+//	//	Code that's only present when doing spectral rendering
+//	#define SPECTRAL_ONLY(CODE) CODE
+//#else
+//	#define SPECTRAL_ONLY(CODE)
+//#endif
