@@ -7,6 +7,7 @@
 
 #include "framebuffer.hpp"
 #include "renderer.hpp"
+#include <iostream>
 
 
 
@@ -98,6 +99,23 @@ inline static void _parse_arguments( char const*const argv[],size_t length, Rend
 			options->scene_name.c_str()
 		);
 		throw -3;
+	}
+
+	std::string str_render_mode = get_arg_req("--render-mode", "-rm");
+	if (str_render_mode == "rgb") {
+		options->render_mode = Renderer::RenderMode::RGB;
+		std::cout << "Render mode: RGB\n";
+	}
+	else if (str_render_mode == "spectral") {
+		options->render_mode = Renderer::RenderMode::Spectral;
+		std::cout << "Render mode: Spectral\n";
+	}
+	else {
+		fprintf(stderr,
+			"Unrecognized render mode \"%s\"!  (Supported modes: \"rgb\", \"spectral\")\n",
+			str_render_mode.c_str()
+		);
+		throw;
 	}
 
 	std::string strs_res[2];
